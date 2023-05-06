@@ -7,7 +7,7 @@ int main()
 
     // Load the background texture
     sf::Texture backgroundTexture;
-    if (!backgroundTexture.loadFromFile("Media/Textures/background.png")) {
+    if (!backgroundTexture.loadFromFile("Media/Textures/background.jpg")) {
         return -1; // error loading the texture
     }
 
@@ -26,8 +26,11 @@ int main()
     // Set the character's starting position
     character.setPosition(400, 300);
 
+    // Set the character's initial size
+    character.setScale(0.25, 0.25); // double the size of the character sprite
+
     // Set the character's movement speed
-    float movementSpeed = 200.f;
+    float movementSpeed = 100.f;
 
     // Create a clock to measure elapsed time
     sf::Clock clock;
