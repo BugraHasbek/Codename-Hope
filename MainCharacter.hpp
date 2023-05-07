@@ -10,7 +10,6 @@ namespace characters
 	{
 	public:
 		main_character();
-		sf::Sprite get_sprite() override;
 		void move(logic::move_direction direction, float delta_time) override;
 
 	private:

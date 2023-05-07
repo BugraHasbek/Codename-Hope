@@ -1,6 +1,7 @@
 #include "Game.hpp"
 #include "SchoolExteriorScene.hpp"
 #include "MainCharacter.hpp"
+#include "LocationLabel.hpp"
 
 namespace game_infrastructure
 {
@@ -13,9 +14,11 @@ namespace game_infrastructure
 
 	void game::run()
 	{
-		std::shared_ptr<characters::main_character> player_character = std::make_shared<characters::main_character>();
+		auto player_character = std::make_shared<characters::main_character>();
+        auto school_label = std::make_shared<rendering::location_label>("Mall", std::pair<float, float>(200.f, 300.f));
 
         scene_->attach(player_character);
+        scene_->attach(school_label);
 
         // todo: move to character class
         // Set the character's movement speed
@@ -28,7 +31,7 @@ namespace game_infrastructure
         while (window_->isOpen())
         {
             // Measure elapsed time
-            float deltaTime = clock.restart().asSeconds();
+            const float delta_time = clock.restart().asSeconds();
 
             // Process events
             sf::Event event;
@@ -42,19 +45,24 @@ namespace game_infrastructure
             // Handle keyboard input
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::W))
             {
-                player_character->move(logic::move_direction::up, deltaTime);
+                player_character->move(logic::move_direction::up, delta_time);
             }
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
             {
-                player_character->move(logic::move_direction::down, deltaTime);
+                player_character->move(logic::move_direction::down, delta_time);
             }
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
             {
-                player_character->move(logic::move_direction::left, deltaTime);
+                player_character->move(logic::move_direction::left, delta_time);
             }
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
             {
-                player_character->move(logic::move_direction::right, deltaTime);
+                player_character->move(logic::move_direction::right, delta_time);
+            }
+
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape))
+            {
+                return;
             }
 
             // Draw the background and character sprites

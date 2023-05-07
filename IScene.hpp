@@ -13,7 +13,6 @@ namespace rendering
 		virtual void draw(std::shared_ptr<sf::RenderWindow>& window) = 0;
 		virtual void attach(std::shared_ptr <IDrawable> drawable_object);
 		virtual void detach(const std::string& drawable_object_id);
-
 	protected:
 		std::unordered_map<std::string, std::shared_ptr<IDrawable> > drawable_objects_;
 	};

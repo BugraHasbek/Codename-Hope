@@ -20,7 +20,10 @@ namespace rendering
 
 		for(auto iterator = drawable_objects_.begin(); iterator != drawable_objects_.end(); ++iterator)
 		{
-			window->draw(iterator->second->get_sprite());
+			if (iterator->second->is_visible())
+			{
+				window->draw(*iterator->second->get_sprite());
+			}
 		}
 		
 		window->display();

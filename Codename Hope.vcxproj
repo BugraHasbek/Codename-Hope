@@ -146,6 +146,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="IScene.hpp" />
+    <ClCompile Include="LocationLabel.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="MainCharacter.cpp" />
@@ -155,6 +156,7 @@
     <ClInclude Include="Game.hpp" />
     <ClInclude Include="IDrawable.hpp" />
     <ClInclude Include="IMovable.hpp" />
+    <ClInclude Include="LocationLabel.hpp" />
     <ClInclude Include="MainCharacter.hpp" />
     <ClInclude Include="SchoolExteriorScene.hpp" />
   </ItemGroup>
