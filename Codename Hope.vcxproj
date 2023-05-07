@@ -145,7 +145,18 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="IScene.hpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Game.cpp" />
+    <ClCompile Include="MainCharacter.cpp" />
+    <ClCompile Include="SchoolExteriorScene.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Game.hpp" />
+    <ClInclude Include="IDrawable.hpp" />
+    <ClInclude Include="IMovable.hpp" />
+    <ClInclude Include="MainCharacter.hpp" />
+    <ClInclude Include="SchoolExteriorScene.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
