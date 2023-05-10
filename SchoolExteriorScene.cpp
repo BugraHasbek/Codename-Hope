@@ -20,8 +20,15 @@ namespace rendering
 
 		for(auto iterator = drawable_objects_.begin(); iterator != drawable_objects_.end(); ++iterator)
 		{
-			window->draw(iterator->second->get_sprite());
+			iterator->second->process_events(main_character_->get_location());
+
+			if (iterator->second->is_visible())
+			{
+				window->draw(*iterator->second->get_sprite());
+			}
 		}
+
+		window->draw(*main_character_->get_sprite());
 		
 		window->display();
 	}

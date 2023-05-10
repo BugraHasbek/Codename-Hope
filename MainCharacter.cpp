@@ -11,17 +11,17 @@ namespace characters
 		}
 
 		// Create the main character sprite
-		sprite_ = sf::Sprite(character_texture_);
+		sprite_ = std::make_shared<sf::Sprite>(character_texture_);
 
 		// Set the character's starting position
 		x_ = 400;
 		y_ = 300;
-		sprite_.setPosition(x_, y_);
+		sprite_->setPosition(x_, y_);
 
 		movement_speed_ = 200.f;
 
 		// Set the character's initial size
-		sprite_.setScale(0.25, 0.25); // double the size of the character sprite
+		sprite_->setScale(0.25, 0.25); // double the size of the character sprite
 
 		drawable_object_id_ = "player";
 	}
@@ -45,13 +45,11 @@ namespace characters
 			x_ += movement_speed_ * delta_time;
 		}
 
-		sprite_.setPosition(x_, y_);
+		sprite_->setPosition(x_, y_);
 	}
 
-
-	sf::Sprite main_character::get_sprite()
+	std::pair<float, float> main_character::get_location() const
 	{
-		return sprite_;
+		return std::pair<float, float>(x_, y_);
 	}
-
 }
