@@ -155,6 +155,7 @@
   <ItemGroup>
     <ClInclude Include="Game.hpp" />
     <ClInclude Include="IDrawable.hpp" />
+    <ClInclude Include="Event.hpp" />
     <ClInclude Include="IMovable.hpp" />
     <ClInclude Include="LocationLabel.hpp" />
     <ClInclude Include="MainCharacter.hpp" />

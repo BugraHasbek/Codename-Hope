@@ -1,7 +1,7 @@
 ﻿#pragma once
 
 #include <SFML/Graphics.hpp>
-
+#include "Event.hpp"
 
 namespace rendering
 {
@@ -14,10 +14,13 @@ namespace rendering
 		void show();
 		void hide();
 		bool is_visible() const;
+		void add_event(const game_infrastructure::event& new_event);
+		void process_events(std::pair<float, float> player_location) const;
 	protected:
 		std::string drawable_object_id_;
 		std::shared_ptr<sf::Sprite> sprite_;
 		bool visibility_ = true;
+		std::vector<game_infrastructure::event> events_;
 	};
 
 	inline std::shared_ptr<sf::Sprite> IDrawable::get_sprite()
@@ -43,6 +46,22 @@ namespace rendering
 	inline bool IDrawable::is_visible() const
 	{
 		return visibility_;
+	}
+
+	inline void IDrawable::add_event(const game_infrastructure::event& new_event)
+	{
+		events_.push_back(new_event);
+	}
+
+	inline void IDrawable::process_events(std::pair<float,float> player_location) const
+	{
+		for (int index = 0; index < events_.size(); index++)
+		{
+			if(events_.at(index).check_event(player_location))
+			{
+				events_.at(index).execute();
+			}
+		}
 	}
 }
 

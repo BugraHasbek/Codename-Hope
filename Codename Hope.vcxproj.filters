@@ -53,5 +53,8 @@
     <ClInclude Include="LocationLabel.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Event.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

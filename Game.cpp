@@ -2,6 +2,8 @@
 #include "SchoolExteriorScene.hpp"
 #include "MainCharacter.hpp"
 #include "LocationLabel.hpp"
+#include "Event.hpp"
+#include <math.h>
 
 namespace game_infrastructure
 {
@@ -14,18 +16,42 @@ namespace game_infrastructure
 
 	void game::run()
 	{
-		auto player_character = std::make_shared<characters::main_character>();
-        auto school_label = std::make_shared<rendering::location_label>("Mall", std::pair<float, float>(200.f, 300.f));
-
-        scene_->attach(player_character);
-        scene_->attach(school_label);
-
-        // todo: move to character class
-        // Set the character's movement speed
-        float movementSpeed = 100.f;
-
         // Create a clock to measure elapsed time
         sf::Clock clock;
+        sf::Event event;
+
+        // create scene objects
+		auto player_character = std::make_shared<characters::main_character>();
+
+
+        // mall label
+        auto mall_label = std::make_shared<rendering::location_label>("Mall", std::pair<float, float>(200.f, 300.f));
+    	auto show_mall_guard_function = [](std::pair<float, float> player_position) { return abs(player_position.first - 200.f) + abs(player_position.second - 300.f) < 40; };
+        auto show_mall_action_function = [mall_label]() {mall_label->show(); };
+        const game_infrastructure::event show_mall_label_event(show_mall_guard_function, show_mall_action_function);
+        auto hide_mall_guard_function = [](std::pair<float, float> player_position) { return abs(player_position.first - 200.f) + abs(player_position.second - 300.f) >= 40; };
+        auto hide_mall_action_function = [mall_label]() {mall_label->hide(); };
+        const game_infrastructure::event hide_mall_label_event(hide_mall_guard_function, hide_mall_action_function);
+        mall_label->add_event(show_mall_label_event);
+        mall_label->add_event(hide_mall_label_event);
+        mall_label->hide();
+
+        // school label
+        auto school_label = std::make_shared<rendering::location_label>("School", std::pair<float, float>(500.f, 300.f));
+        auto show_school_guard_function = [](std::pair<float, float> player_position) { return abs(player_position.first - 500.f) + abs(player_position.second - 300.f) < 40; };
+        auto show_school_action_function = [school_label]() {school_label->show(); };
+        const game_infrastructure::event show_school_label_event(show_school_guard_function, show_school_action_function);
+        auto hide_school_guard_function = [](std::pair<float, float> player_position) { return abs(player_position.first - 500.f) + abs(player_position.second - 300.f) >= 40; };
+        auto hide_school_action_function = [school_label]() {school_label->hide(); };
+        const game_infrastructure::event hide_school_label_event(hide_school_guard_function, hide_school_action_function);
+        school_label->add_event(show_school_label_event);
+        school_label->add_event(hide_school_label_event);
+        school_label->hide();
+
+        // attach to the scene
+        scene_->attach_pc(player_character);
+        scene_->attach(school_label);
+        scene_->attach(mall_label);
 
         // Start the game loop
         while (window_->isOpen())
@@ -34,7 +60,7 @@ namespace game_infrastructure
             const float delta_time = clock.restart().asSeconds();
 
             // Process events
-            sf::Event event;
+            
             while (window_->pollEvent(event))
             {
                 // Close window: exit

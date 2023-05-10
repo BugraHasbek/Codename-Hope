@@ -47,4 +47,9 @@ namespace characters
 
 		sprite_->setPosition(x_, y_);
 	}
+
+	std::pair<float, float> main_character::get_location() const
+	{
+		return std::pair<float, float>(x_, y_);
+	}
 }
