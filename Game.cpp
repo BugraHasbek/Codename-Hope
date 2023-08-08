@@ -5,10 +5,13 @@
 #include "Event.hpp"
 #include <math.h>
 
+constexpr unsigned int screen_width = 2560;
+constexpr unsigned int screen_height = 1440;
+
 namespace game_infrastructure
 {
     game::game()
-	    :window_(std::make_shared<sf::RenderWindow>(sf::VideoMode(800, 600), "Codename Hope", sf::Style::Close)),
+	    :window_(std::make_shared<sf::RenderWindow>(sf::VideoMode(screen_width, screen_height), "Codename Hope", sf::Style::Close)),
 	     scene_(std::make_unique<rendering::school_exterior_scene>())
     {
         
@@ -34,7 +37,7 @@ namespace game_infrastructure
         const game_infrastructure::event hide_mall_label_event(hide_mall_guard_function, hide_mall_action_function);
         mall_label->add_event(show_mall_label_event);
         mall_label->add_event(hide_mall_label_event);
-        mall_label->hide();
+        //mall_label->hide();
 
         // school label
         auto school_label = std::make_shared<rendering::location_label>("School", std::pair<float, float>(500.f, 300.f));
@@ -46,7 +49,7 @@ namespace game_infrastructure
         const game_infrastructure::event hide_school_label_event(hide_school_guard_function, hide_school_action_function);
         school_label->add_event(show_school_label_event);
         school_label->add_event(hide_school_label_event);
-        school_label->hide();
+        //school_label->hide();
 
         // attach to the scene
         scene_->attach_pc(player_character);

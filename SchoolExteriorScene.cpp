@@ -5,7 +5,7 @@ namespace rendering
 	school_exterior_scene::school_exterior_scene()
 	{
 		// Load the background texture
-		if (!background_texture_.loadFromFile("Media/Textures/school_exterior_background.jpg"))
+		if (!background_texture_.loadFromFile("Media/Textures/school_exterior_background.png"))
 		{
 			throw std::exception("school exterior background texture cannot be loaded");
 		}
