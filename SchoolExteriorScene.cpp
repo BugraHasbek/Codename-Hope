@@ -30,6 +30,6 @@ namespace rendering
 
 		window->draw(*main_character_->get_sprite());
 		
-		window->display();
+		//window->display();
 	}
 }

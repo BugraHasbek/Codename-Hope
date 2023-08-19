@@ -13,6 +13,8 @@ namespace game_infrastructure
 		
 	private:
 		std::shared_ptr<sf::RenderWindow>  window_;
-		std::unique_ptr<rendering::IScene> scene_;
+		std::unique_ptr<rendering::IScene> school_exterior_;
+		std::unique_ptr<rendering::IScene> dormitory_;
+		std::unique_ptr<rendering::IScene> ui_;
 	};
 }
