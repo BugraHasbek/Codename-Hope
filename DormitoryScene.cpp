@@ -10,9 +10,9 @@ namespace rendering
 		:dorm_001_(sf::Sprite())
 	{
 		// Load the background texture
-		if (!dorm_001_texture_.loadFromFile("Media/Textures/scenes/dormitory-001.png"))
+		if (!dorm_001_texture_.loadFromFile("Media/Textures/scenes/Room_Umut_2560x1440.jpg"))
 		{
-			throw std::exception("dorm room texture cannot be loaded");
+			throw std::exception("umut's dorm room texture cannot be loaded");
 		}
 
 		// Set the scale factor to expand the texture to the screen size
@@ -24,9 +24,22 @@ namespace rendering
 		// Set the scale of the sprite
 		dorm_001_.setScale(scale_factor);
 		dorm_001_.setTexture(dorm_001_texture_);
+
+		// TODO: YAPILACAKLAR
+		// 1. create a view and move it around the sprite
+		/*
+		sf::View view;
+		view.setSize(window.getSize().x, window.getSize().y); // Set the size of the view to match the window size
+		view.setCenter(player.getPosition()); // Set the initial center of the view to the player's position
+		window.setView(view); // Apply the view to the window
+
+		// Update the view's center to follow the player (call this in your game loop)
+		view.setCenter(player.getPosition());
+		window.setView(view);
+		*/
 	}
 
-	void dormitory_scene::draw(std::shared_ptr<sf::RenderWindow>& window)
+	void dormitory_scene::draw(std::shared_ptr<sf::RenderWindow>& window)	
 	{
 		// Draw the background and character sprites
 		window->draw(dorm_001_);
