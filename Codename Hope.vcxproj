@@ -145,25 +145,14 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="DormitoryScene.cpp" />
-    <ClCompile Include="IScene.hpp" />
-    <ClCompile Include="LocationLabel.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="Game.cpp" />
-    <ClCompile Include="MainCharacter.cpp" />
-    <ClCompile Include="SchoolExteriorScene.cpp" />
-    <ClCompile Include="UI.cpp" />
+    <ClCompile Include="game.cpp" />
+    <ClCompile Include="scene_manager.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="DormitoryScene.hpp" />
-    <ClInclude Include="Game.hpp" />
-    <ClInclude Include="IDrawable.hpp" />
-    <ClInclude Include="Event.hpp" />
-    <ClInclude Include="IMovable.hpp" />
-    <ClInclude Include="LocationLabel.hpp" />
-    <ClInclude Include="MainCharacter.hpp" />
-    <ClInclude Include="SchoolExteriorScene.hpp" />
-    <ClInclude Include="UI.hpp" />
+    <ClInclude Include="game.hpp" />
+    <ClInclude Include="game_context.hpp" />
+    <ClInclude Include="scene_manager.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

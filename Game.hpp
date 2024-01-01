@@ -1,7 +1,9 @@
 #pragma once
 
 #include <SFML/Graphics.hpp>
-#include "IScene.hpp"
+
+#include "game_context.hpp"
+#include "scene_manager.hpp"
 
 namespace game_infrastructure
 {
@@ -12,9 +14,8 @@ namespace game_infrastructure
 		void run();
 		
 	private:
-		std::shared_ptr<sf::RenderWindow>  window_;
-		std::unique_ptr<rendering::IScene> school_exterior_;
-		std::unique_ptr<rendering::IScene> dormitory_;
-		std::unique_ptr<rendering::IScene> ui_;
+		std::shared_ptr<sf::RenderWindow>  window;
+		game_context                       context;
+		rendering::scene_manager           scene_manager;
 	};
 }
