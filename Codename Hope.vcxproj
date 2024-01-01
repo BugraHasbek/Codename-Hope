@@ -148,11 +148,14 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="game.cpp" />
     <ClCompile Include="scene_manager.cpp" />
+    <ClCompile Include="game_context.cpp" />
+    <ClCompile Include="view_manager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="game.hpp" />
     <ClInclude Include="game_context.hpp" />
     <ClInclude Include="scene_manager.hpp" />
+    <ClInclude Include="view_manager.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -1,10 +1,13 @@
 #include "scene_manager.hpp"
 #include <cmath>
+#include <iostream>
 
 constexpr unsigned int tile_width  = 256;
 constexpr unsigned int tile_height = 128;
 
-rendering::scene_manager::scene_manager()
+rendering::scene_manager::scene_manager(const game_infrastructure::game_context& context)
+	: context(context),
+	isometric_world{0}
 {
 	if (!invalid_texture.loadFromFile("Media/Textures/tileset/invalid.png"))
 	{
@@ -37,7 +40,7 @@ rendering::scene_manager::scene_manager()
 	isometric_world.at(world_size_x * 9) = 1;
 }
 
-void rendering::scene_manager::draw(const std::shared_ptr<sf::RenderWindow>& window, const game_infrastructure::game_context& context)
+void rendering::scene_manager::draw(sf::RenderWindow& window)
 {
 	sf::Sprite tile;
 	for (std::size_t x_index = 0; x_index < world_size_x; x_index++)
@@ -54,11 +57,12 @@ void rendering::scene_manager::draw(const std::shared_ptr<sf::RenderWindow>& win
 				break;
 			default:
 				tile.setTexture(invalid_texture);
+				std::cout << "ERROR: isometric map[" << x_index << "][" << y_index << "] : " << isometric_world[x_index + y_index * world_size_x] << std::endl;
 				break;
 			}
 			std::pair<float, float> screen_location = world2Screen(x_index, y_index);
 			tile.setPosition(screen_location.first, screen_location.second);
-			window->draw(tile);
+			window.draw(tile);
 		}
 	}
 }
