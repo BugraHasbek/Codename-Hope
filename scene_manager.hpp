@@ -11,14 +11,15 @@ namespace rendering
 
 	class scene_manager {
 	public:
-		explicit scene_manager();
-		void draw(const std::shared_ptr<sf::RenderWindow>& window, const game_infrastructure::game_context& context);
+		explicit scene_manager(const game_infrastructure::game_context& context);
+		void draw(sf::RenderWindow& window);
 
 	private:
+		game_infrastructure::game_context context;
 		sf::Texture empty_texture;
 		sf::Texture green_texture;
 		sf::Texture invalid_texture;
-		std::array<unsigned int, world_size_x* world_size_y> isometric_world;
+		std::array<unsigned int, world_size_x * world_size_y> isometric_world;
 
 		std::pair<float, float> world2Screen(const unsigned int& x, const unsigned int& y) const;
 	};

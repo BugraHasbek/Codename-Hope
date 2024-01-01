@@ -4,6 +4,7 @@
 
 #include "game_context.hpp"
 #include "scene_manager.hpp"
+#include "view_manager.hpp"
 
 namespace game_infrastructure
 {
@@ -14,8 +15,9 @@ namespace game_infrastructure
 		void run();
 		
 	private:
-		std::shared_ptr<sf::RenderWindow>  window;
 		game_context                       context;
+		sf::RenderWindow                   window;
 		rendering::scene_manager           scene_manager;
+		rendering::view_manager            view_manager;
 	};
 }
