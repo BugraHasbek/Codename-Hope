@@ -7,7 +7,7 @@
 namespace rendering
 {
 	constexpr int window_edge_offset = 200;  // There is a disrepancy between window size and the mouse position. This offset will be used for detecting whether mouse is at the border of screen or not
-	constexpr int map_move_speed = 5;       // how fast should we move map when mouse is in window borders
+	constexpr int map_move_speed = 1;       // how fast should we move map when mouse is in window borders
 
 	class view_manager {
 	public:

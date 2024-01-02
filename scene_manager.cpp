@@ -2,6 +2,8 @@
 #include <cmath>
 #include <utility>
 #include <iostream>
+#include <fstream>
+#include <sstream>
 
 constexpr float tile_width  = 256.0f;
 constexpr float tile_height = 128.0f;
@@ -25,20 +27,7 @@ rendering::scene_manager::scene_manager(const game_infrastructure::game_context&
 		throw std::exception("green tile texture cannot be loaded");
 	}
 
-	isometric_world.at(0) = 1;
-	isometric_world.at(1) = 1;
-	isometric_world.at(2) = 1;
-	isometric_world.at(3) = 1;
-	isometric_world.at(4) = 1;
-	isometric_world.at(world_size_x) = 1;
-	isometric_world.at(world_size_x * 2) = 1;
-	isometric_world.at(world_size_x * 3) = 1;
-	isometric_world.at(world_size_x * 4) = 1;
-	isometric_world.at(world_size_x * 5) = 1;
-	isometric_world.at(world_size_x * 6) = 1;
-	isometric_world.at(world_size_x * 7) = 1;
-	isometric_world.at(world_size_x * 8) = 1;
-	isometric_world.at(world_size_x * 9) = 1;
+	read_tiles();
 
 	rectangle.setFillColor(sf::Color(0, 0, 0, 0));
 	rectangle.setOutlineColor(sf::Color(255, 0, 0, 255));
@@ -77,7 +66,56 @@ void rendering::scene_manager::draw(sf::RenderWindow& window)
 void rendering::scene_manager::edit_tile(sf::Vector2i mouse_pos, sf::Vector2f top_left_corner)
 {
 	sf::Vector2u world_index = screen2World(mouse_pos, top_left_corner);
-	isometric_world.at(world_index.x + world_index.y * world_size_x) = (isometric_world.at(world_index.x + world_index.y * world_size_x)  + 1) % tileset_count;
+	auto isometric_index = world_index.x + world_index.y * world_size_x;
+
+	if (isometric_index < isometric_world.size())
+	{
+		isometric_world.at(isometric_index) = (isometric_world.at(isometric_index)  + 1) % tileset_count;
+	}
+}
+
+void rendering::scene_manager::write_tiles() const
+{
+	std::ofstream map("map.dat", std::ios::out);
+	std::stringstream content;
+	content << world_size_x << " " << world_size_y << std::endl;
+
+	for (std::size_t x_index = 0; x_index < world_size_x; x_index++)
+	{
+		for (std::size_t y_index = 0; y_index < world_size_y; y_index++)
+		{
+			content << isometric_world.at(x_index + y_index * world_size_x) << " ";
+		}
+		content << std::endl;
+	}
+	map.write(content.str().c_str(), content.str().length());
+	map.close();
+}
+
+void rendering::scene_manager::read_tiles()
+{
+	std::ifstream file("map.dat", std::ios::in);
+	if (!file.is_open()) {
+		std::cerr << "Error opening file map.dat" << std::endl;
+		return;
+	}
+
+	unsigned int width;
+	unsigned int height;
+	file >> width >> height;
+
+	if (width != world_size_x || height != world_size_y) {
+		std::cerr << "Map dimensions do not match world size.\n";
+		return;
+	}
+
+	for (unsigned int i = 0; i < width; ++i) {
+		for (unsigned int j = 0; j < height; ++j) {
+			file >> isometric_world[i * world_size_y + j];
+		}
+	}
+
+	file.close();
 }
 
 std::pair<float, float> rendering::scene_manager::world2Screen(const unsigned int& x, const unsigned int& y) const
@@ -115,3 +153,5 @@ sf::Vector2u rendering::scene_manager::screen2World(const sf::Vector2i& mouse_po
 
 	return sf::Vector2u(isometric_x, isometric_y);
 }
+
+
