@@ -8,11 +8,13 @@ namespace rendering
 {
 	constexpr unsigned int world_size_x = 100;
 	constexpr unsigned int world_size_y = 100;
+	constexpr unsigned int tileset_count = 2;
 
 	class scene_manager {
 	public:
 		explicit scene_manager(const game_infrastructure::game_context& context);
 		void draw(sf::RenderWindow& window);
+		void edit_tile(sf::Vector2i mouse_pos, sf::Vector2f top_left_corner);
 
 	private:
 		game_infrastructure::game_context context;
@@ -21,6 +23,9 @@ namespace rendering
 		sf::Texture invalid_texture;
 		std::array<unsigned int, world_size_x * world_size_y> isometric_world;
 
+		sf::RectangleShape rectangle;
+
 		std::pair<float, float> world2Screen(const unsigned int& x, const unsigned int& y) const;
+		sf::Vector2u screen2World(const sf::Vector2i& mouse_pos, sf::Vector2f top_left_corner) const;
 	};
 }
