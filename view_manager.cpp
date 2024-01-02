@@ -1,12 +1,15 @@
 #include "view_manager.hpp"
+#include <iostream>
 
 rendering::view_manager::view_manager(const game_infrastructure::game_context& context)
 	: context(context)
 {
 	view.setSize(static_cast<float>(context.get_screen_resolution().x), static_cast<float>(context.get_screen_resolution().y)); // Set the size of the view to match the window size
-	
-	//TODO: set view center to actual world center position. possible solution: move sf:view to scene manager because SceneManager actually knows world limits. alternative move world_size_x, tile_width, etc to GameContext
-	view.setCenter(1280, 720); // Set the initial center of the view
+    
+    // TODO: there is a weird bug here. sometimes center is not set correctly in a run but the next run it will be correct and then the next run it will be incorrect again
+    // this bug is triggered only in certain circumstances. for example if the view is centered on one of the edges it works correct all the time but if view is centered in the middle of isometric map bug occurs
+    std::cout << "setting center as " << context.get_view_center().x << " " << context.get_view_center().y << std::endl;
+	view.setCenter(context.get_view_center()); // Set the initial center of the view as the view center of previous run
 }
 
 sf::View rendering::view_manager::get_view() const

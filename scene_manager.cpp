@@ -10,7 +10,7 @@ constexpr float tile_height = 128.0f;
 
 rendering::scene_manager::scene_manager(const game_infrastructure::game_context& context)
 	: context(context),
-	  isometric_world{0}
+	  isometric_world{ 0 }
 {
 	if (!invalid_texture.loadFromFile("Media/Textures/tileset/invalid.png"))
 	{
@@ -28,10 +28,6 @@ rendering::scene_manager::scene_manager(const game_infrastructure::game_context&
 	}
 
 	read_tiles();
-
-	rectangle.setFillColor(sf::Color(0, 0, 0, 0));
-	rectangle.setOutlineColor(sf::Color(255, 0, 0, 255));
-	rectangle.setOutlineThickness(1);
 }
 
 void rendering::scene_manager::draw(sf::RenderWindow& window)
@@ -51,7 +47,6 @@ void rendering::scene_manager::draw(sf::RenderWindow& window)
 				break;
 			default:
 				tile.setTexture(invalid_texture);
-				std::cout << "ERROR: isometric map[" << x_index << "][" << y_index << "] : " << isometric_world[x_index + y_index * world_size_x] << std::endl;
 				break;
 			}
 			std::pair<float, float> screen_location = world2Screen(x_index, y_index);
@@ -59,8 +54,6 @@ void rendering::scene_manager::draw(sf::RenderWindow& window)
 			window.draw(tile);
 		}
 	}
-
-	window.draw(rectangle);
 }
 
 void rendering::scene_manager::edit_tile(sf::Vector2i mouse_pos, sf::Vector2f top_left_corner)
@@ -76,8 +69,12 @@ void rendering::scene_manager::edit_tile(sf::Vector2i mouse_pos, sf::Vector2f to
 
 void rendering::scene_manager::write_tiles() const
 {
-	std::ofstream map("map.dat", std::ios::out);
 	std::stringstream content;
+	std::ofstream file(filename, std::ios::out);
+	if (!file.is_open()) {
+		std::cerr << "Error opening file " << filename << std::endl;
+		return;
+	}
 	content << world_size_x << " " << world_size_y << std::endl;
 
 	for (std::size_t x_index = 0; x_index < world_size_x; x_index++)
@@ -88,15 +85,15 @@ void rendering::scene_manager::write_tiles() const
 		}
 		content << std::endl;
 	}
-	map.write(content.str().c_str(), content.str().length());
-	map.close();
+	file.write(content.str().c_str(), content.str().length());
+	file.close();
 }
 
 void rendering::scene_manager::read_tiles()
 {
-	std::ifstream file("map.dat", std::ios::in);
+	std::ifstream file(filename, std::ios::in);
 	if (!file.is_open()) {
-		std::cerr << "Error opening file map.dat" << std::endl;
+		std::cerr << "Error opening file " << filename << std::endl;
 		return;
 	}
 

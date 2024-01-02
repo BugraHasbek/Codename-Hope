@@ -38,6 +38,9 @@ namespace game_infrastructure
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape))
             {
                 scene_manager.write_tiles();
+
+                context.set_view_center(view_manager.get_view().getCenter());
+                context.write_context();
                 return;
             }
 
