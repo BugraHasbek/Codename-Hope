@@ -1,13 +1,16 @@
 #include "scene_manager.hpp"
 #include <cmath>
+#include <utility>
 #include <iostream>
+#include <fstream>
+#include <sstream>
 
-constexpr unsigned int tile_width  = 256;
-constexpr unsigned int tile_height = 128;
+constexpr float tile_width  = 256.0f;
+constexpr float tile_height = 128.0f;
 
 rendering::scene_manager::scene_manager(const game_infrastructure::game_context& context)
 	: context(context),
-	isometric_world{0}
+	  isometric_world{ 0 }
 {
 	if (!invalid_texture.loadFromFile("Media/Textures/tileset/invalid.png"))
 	{
@@ -24,20 +27,7 @@ rendering::scene_manager::scene_manager(const game_infrastructure::game_context&
 		throw std::exception("green tile texture cannot be loaded");
 	}
 
-	isometric_world.at(0) = 1;
-	isometric_world.at(1) = 1;
-	isometric_world.at(2) = 1;
-	isometric_world.at(3) = 1;
-	isometric_world.at(4) = 1;
-	isometric_world.at(world_size_x) = 1;
-	isometric_world.at(world_size_x * 2) = 1;
-	isometric_world.at(world_size_x * 3) = 1;
-	isometric_world.at(world_size_x * 4) = 1;
-	isometric_world.at(world_size_x * 5) = 1;
-	isometric_world.at(world_size_x * 6) = 1;
-	isometric_world.at(world_size_x * 7) = 1;
-	isometric_world.at(world_size_x * 8) = 1;
-	isometric_world.at(world_size_x * 9) = 1;
+	read_tiles();
 }
 
 void rendering::scene_manager::draw(sf::RenderWindow& window)
@@ -57,7 +47,6 @@ void rendering::scene_manager::draw(sf::RenderWindow& window)
 				break;
 			default:
 				tile.setTexture(invalid_texture);
-				std::cout << "ERROR: isometric map[" << x_index << "][" << y_index << "] : " << isometric_world[x_index + y_index * world_size_x] << std::endl;
 				break;
 			}
 			std::pair<float, float> screen_location = world2Screen(x_index, y_index);
@@ -67,9 +56,99 @@ void rendering::scene_manager::draw(sf::RenderWindow& window)
 	}
 }
 
+void rendering::scene_manager::edit_tile(sf::Vector2i mouse_pos, sf::Vector2f top_left_corner)
+{
+	sf::Vector2u world_index = screen2World(mouse_pos, top_left_corner);
+	auto isometric_index = world_index.x + world_index.y * world_size_x;
+
+	if (isometric_index < isometric_world.size())
+	{
+		isometric_world.at(isometric_index) = (isometric_world.at(isometric_index)  + 1) % tileset_count;
+	}
+}
+
+void rendering::scene_manager::write_tiles() const
+{
+	std::stringstream content;
+	std::ofstream file(filename, std::ios::out);
+	if (!file.is_open()) {
+		std::cerr << "Error opening file " << filename << std::endl;
+		return;
+	}
+	content << world_size_x << " " << world_size_y << std::endl;
+
+	for (std::size_t x_index = 0; x_index < world_size_x; x_index++)
+	{
+		for (std::size_t y_index = 0; y_index < world_size_y; y_index++)
+		{
+			content << isometric_world.at(x_index + y_index * world_size_x) << " ";
+		}
+		content << std::endl;
+	}
+	file.write(content.str().c_str(), content.str().length());
+	file.close();
+}
+
+void rendering::scene_manager::read_tiles()
+{
+	std::ifstream file(filename, std::ios::in);
+	if (!file.is_open()) {
+		std::cerr << "Error opening file " << filename << std::endl;
+		return;
+	}
+
+	unsigned int width;
+	unsigned int height;
+	file >> width >> height;
+
+	if (width != world_size_x || height != world_size_y) {
+		std::cerr << "Map dimensions do not match world size.\n";
+		return;
+	}
+
+	for (unsigned int i = 0; i < width; ++i) {
+		for (unsigned int j = 0; j < height; ++j) {
+			file >> isometric_world[i * world_size_y + j];
+		}
+	}
+
+	file.close();
+}
+
 std::pair<float, float> rendering::scene_manager::world2Screen(const unsigned int& x, const unsigned int& y) const
 {
-	float screen_x = static_cast<float>(x * tile_width) / 2.0f - static_cast<float>(y * tile_width) / 2.0f;
-	float screen_y = static_cast<float>(y * tile_height) / 2.0f + static_cast<float>(x * tile_height) / 2.0f;
+	auto x_ = static_cast<float>(x);
+	auto y_ = static_cast<float>(y);
+
+	//simplification of  (x * tile_width) / 2 - (y * tile_width) / 2;
+	float screen_x = (x_ - y_) * tile_width / 2.0f;
+
+	//simplification of  (x * tile_width) / 2 + (y * tile_width) / 2;
+	float screen_y = (x_ + y_) * tile_height / 2.0f;
+
 	return std::pair<float, float>(screen_x, screen_y);
 }
+
+sf::Vector2u rendering::scene_manager::screen2World(const sf::Vector2i& mouse_pos, sf::Vector2f top_left_corner) const
+{
+	auto x_ = static_cast<float>(mouse_pos.x) + top_left_corner.x;
+	auto y_ = static_cast<float>(mouse_pos.y) + top_left_corner.y;
+	
+	std::cout << "mouse pos:[" << mouse_pos.x << " , " << mouse_pos.y  << "]" << std::endl;
+	std::cout << "view port:[" << top_left_corner.x << " , " << top_left_corner.y << "]" << std::endl;
+	std::cout << "[x_, y_] :[" << x_ << ", " << y_ << std::endl;
+
+	auto row = (x_ / 128.0f) - 1.0f;
+	auto column = (y_ / 64.0f);
+	std::cout << "row: " << row << std::endl;
+	std::cout << "column: " << column << std::endl;
+
+	auto isometric_x = static_cast<unsigned int>((column + row) / 2.0f);
+	auto isometric_y = static_cast<unsigned int>((column - row) / 2.0f);
+	std::cout << "isometric_x: " << isometric_x << std::endl;
+	std::cout << "isometric_y: " << isometric_y << std::endl;
+
+	return sf::Vector2u(isometric_x, isometric_y);
+}
+
+

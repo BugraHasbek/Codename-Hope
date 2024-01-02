@@ -26,20 +26,27 @@ namespace game_infrastructure
                 // Close window: exit
                 if (event.type == sf::Event::Closed)
                     window.close();
-            }
 
-            // Detect mouse movement
-            if (event.type == sf::Event::MouseMoved) 
-            {
-                // Update the view
-                sf::Vector2i mouse_pos = sf::Mouse::getPosition(window);
-                view_manager.update(mouse_pos);
+                // Detect left mouse click
+                if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left)
+                {
+                    sf::Vector2i mouse_pos = sf::Mouse::getPosition(window);
+                    scene_manager.edit_tile(mouse_pos, view_manager.get_top_left_corner());
+                }
             }
 
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape))
             {
+                scene_manager.write_tiles();
+
+                context.set_view_center(view_manager.get_view().getCenter());
+                context.write_context();
                 return;
             }
+
+            // Move map if mouse is on screen borders
+            sf::Vector2i mouse_pos = sf::Mouse::getPosition(window);
+            view_manager.update(mouse_pos);
 
             // Draw the background and character sprites
             window.clear(sf::Color(255,255,255,255));
@@ -48,5 +55,4 @@ namespace game_infrastructure
             window.display();
         }
 	}
-
 }
