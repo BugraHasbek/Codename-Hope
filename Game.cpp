@@ -31,7 +31,12 @@ namespace game_infrastructure
                 if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left)
                 {
                     sf::Vector2i mouse_pos = sf::Mouse::getPosition(window);
-                    scene_manager.edit_tile(mouse_pos, view_manager.get_top_left_corner());
+                    scene_manager.edit_tile(mouse_pos, view_manager.get_top_left_corner(), rendering::direction::forward);
+                }
+                else if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Right)
+                {
+                    sf::Vector2i mouse_pos = sf::Mouse::getPosition(window);
+                    scene_manager.edit_tile(mouse_pos, view_manager.get_top_left_corner(), rendering::direction::backward);
                 }
             }
 
