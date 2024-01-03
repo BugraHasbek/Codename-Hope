@@ -4,6 +4,9 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
+#include <filesystem>
+
+namespace fs = std::filesystem;
 
 constexpr float tile_width  = 256.0f;
 constexpr float tile_height = 128.0f;
@@ -12,20 +15,39 @@ rendering::scene_manager::scene_manager(const game_infrastructure::game_context&
 	: context(context),
 	  isometric_world{ 0 }
 {
-	if (!invalid_texture.loadFromFile("Media/Textures/tileset/invalid.png"))
+	std::vector<std::string> png_files;
+
+	// Check if the directory exists
+	if (fs::exists(directory_path) && fs::is_directory(directory_path)) 
 	{
-		throw std::exception("invalid tile texture cannot be loaded");
+		// Iterate through the directory and find PNG files
+		for (const auto& entry : fs::directory_iterator(directory_path)) 
+		{
+			if (entry.is_regular_file() && entry.path().extension() == ".png") 
+			{
+				png_files.push_back(directory_path + entry.path().filename().string());
+			}
+		}
+	}
+	else
+	{
+		std::cerr << "Directory does not exist or is invalid.\n";
 	}
 
-	if (!empty_texture.loadFromFile("Media/Textures/tileset/empty.png"))
-	{
-		throw std::exception("empty tile texture cannot be loaded");
-	}
+	// Sort the vector alphabetically
+	std::sort(png_files.begin(), png_files.end());
 
-	if (!green_texture.loadFromFile("Media/Textures/tileset/green.png"))
+	int index = 0;
+	for (const auto& texture_name : png_files)
 	{
-		throw std::exception("green tile texture cannot be loaded");
-	}
+		sf::Texture texture;
+		if (!texture.loadFromFile(texture_name))
+		{
+			std::cerr << "texture cannot be loaded: " + texture_name << ".\n";
+		}
+		std::cout << "index: " << index++ << ": " << texture_name << "\n";
+		tile_textures.push_back(texture);
+	}	
 
 	read_tiles();
 }
@@ -37,18 +59,7 @@ void rendering::scene_manager::draw(sf::RenderWindow& window)
 	{
 		for (std::size_t y_index = 0; y_index < world_size_y; y_index++)
 		{
-			switch (isometric_world[x_index + y_index * world_size_x])
-			{
-			case 0:
-				tile.setTexture(empty_texture);
-				break;
-			case 1:
-				tile.setTexture(green_texture);
-				break;
-			default:
-				tile.setTexture(invalid_texture);
-				break;
-			}
+			tile.setTexture(tile_textures.at(isometric_world[x_index + y_index * world_size_x]));
 			std::pair<float, float> screen_location = world2Screen(x_index, y_index);
 			tile.setPosition(screen_location.first, screen_location.second);
 			window.draw(tile);
@@ -63,7 +74,7 @@ void rendering::scene_manager::edit_tile(sf::Vector2i mouse_pos, sf::Vector2f to
 
 	if (isometric_index < isometric_world.size())
 	{
-		isometric_world.at(isometric_index) = (isometric_world.at(isometric_index)  + 1) % tileset_count;
+		isometric_world.at(isometric_index) = (isometric_world.at(isometric_index)  + 1) % tile_textures.size();
 	}
 }
 
@@ -106,9 +117,9 @@ void rendering::scene_manager::read_tiles()
 		return;
 	}
 
-	for (unsigned int i = 0; i < width; ++i) {
-		for (unsigned int j = 0; j < height; ++j) {
-			file >> isometric_world[i * world_size_y + j];
+	for (unsigned int x_index = 0; x_index < world_size_x; ++x_index) {
+		for (unsigned int y_index = 0; y_index < world_size_y; ++y_index) {
+			file >> isometric_world[x_index + y_index * world_size_x];
 		}
 	}
 
