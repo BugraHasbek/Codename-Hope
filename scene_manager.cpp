@@ -12,43 +12,17 @@ rendering::scene_manager::scene_manager(const game_infrastructure::game_context&
 	: context(context),
 	  isometric_world{ 0 }
 {
-	if (!invalid_texture.loadFromFile("Media/Textures/tileset/invalid.png"))
-	{
-		throw std::exception("invalid tile texture cannot be loaded");
-	}
-
-	if (!empty_texture.loadFromFile("Media/Textures/tileset/empty.png"))
-	{
-		throw std::exception("empty tile texture cannot be loaded");
-	}
-
-	if (!green_texture.loadFromFile("Media/Textures/tileset/green.png"))
-	{
-		throw std::exception("green tile texture cannot be loaded");
-	}
-
 	read_tiles();
 }
 
 void rendering::scene_manager::draw(sf::RenderWindow& window)
 {
-	sf::Sprite tile;
 	for (std::size_t x_index = 0; x_index < world_size_x; x_index++)
 	{
 		for (std::size_t y_index = 0; y_index < world_size_y; y_index++)
 		{
-			switch (isometric_world[x_index + y_index * world_size_x])
-			{
-			case 0:
-				tile.setTexture(empty_texture);
-				break;
-			case 1:
-				tile.setTexture(green_texture);
-				break;
-			default:
-				tile.setTexture(invalid_texture);
-				break;
-			}
+			sf::Sprite tile;
+			tile.setTexture(texture_manager.get_texture(isometric_world[x_index + y_index * world_size_x]));
 			std::pair<float, float> screen_location = world2Screen(x_index, y_index);
 			tile.setPosition(screen_location.first, screen_location.second);
 			window.draw(tile);
@@ -56,14 +30,15 @@ void rendering::scene_manager::draw(sf::RenderWindow& window)
 	}
 }
 
-void rendering::scene_manager::edit_tile(sf::Vector2i mouse_pos, sf::Vector2f top_left_corner)
+void rendering::scene_manager::edit_tile(sf::Vector2i mouse_pos, sf::Vector2f top_left_corner, direction direction)
 {
 	sf::Vector2u world_index = screen2World(mouse_pos, top_left_corner);
 	auto isometric_index = world_index.x + world_index.y * world_size_x;
 
 	if (isometric_index < isometric_world.size())
 	{
-		isometric_world.at(isometric_index) = (isometric_world.at(isometric_index)  + 1) % tileset_count;
+		isometric_world.at(isometric_index) = direction == direction::forward ? texture_manager.get_next_texture_id(isometric_world.at(isometric_index)) :
+			                                                                    texture_manager.get_prev_texture_id(isometric_world.at(isometric_index));
 	}
 }
 
@@ -106,9 +81,9 @@ void rendering::scene_manager::read_tiles()
 		return;
 	}
 
-	for (unsigned int i = 0; i < width; ++i) {
-		for (unsigned int j = 0; j < height; ++j) {
-			file >> isometric_world[i * world_size_y + j];
+	for (unsigned int x_index = 0; x_index < world_size_x; ++x_index) {
+		for (unsigned int y_index = 0; y_index < world_size_y; ++y_index) {
+			file >> isometric_world[x_index + y_index * world_size_x];
 		}
 	}
 
@@ -133,20 +108,12 @@ sf::Vector2u rendering::scene_manager::screen2World(const sf::Vector2i& mouse_po
 {
 	auto x_ = static_cast<float>(mouse_pos.x) + top_left_corner.x;
 	auto y_ = static_cast<float>(mouse_pos.y) + top_left_corner.y;
-	
-	std::cout << "mouse pos:[" << mouse_pos.x << " , " << mouse_pos.y  << "]" << std::endl;
-	std::cout << "view port:[" << top_left_corner.x << " , " << top_left_corner.y << "]" << std::endl;
-	std::cout << "[x_, y_] :[" << x_ << ", " << y_ << std::endl;
 
 	auto row = (x_ / 128.0f) - 1.0f;
 	auto column = (y_ / 64.0f);
-	std::cout << "row: " << row << std::endl;
-	std::cout << "column: " << column << std::endl;
 
 	auto isometric_x = static_cast<unsigned int>((column + row) / 2.0f);
 	auto isometric_y = static_cast<unsigned int>((column - row) / 2.0f);
-	std::cout << "isometric_x: " << isometric_x << std::endl;
-	std::cout << "isometric_y: " << isometric_y << std::endl;
 
 	return sf::Vector2u(isometric_x, isometric_y);
 }
