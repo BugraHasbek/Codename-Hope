@@ -8,6 +8,8 @@
 
 namespace game_infrastructure
 {
+	constexpr bool map_edit_allowed = false;
+
 	class game
 	{
 	public:
