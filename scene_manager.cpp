@@ -5,6 +5,7 @@
 #include <fstream>
 #include <sstream>
 
+
 constexpr float tile_width  = 256.0f;
 constexpr float tile_height = 128.0f;
 
@@ -22,12 +23,14 @@ void rendering::scene_manager::draw(sf::RenderWindow& window)
 		for (std::size_t y_index = 0; y_index < world_size_y; y_index++)
 		{
 			sf::Sprite tile;
-			tile.setTexture(texture_manager.get_texture(isometric_world[x_index + y_index * world_size_x]));
+			tile.setTexture(texture_manager::getInstance()->get_texture(isometric_world[x_index + y_index * world_size_x]));
 			std::pair<float, float> screen_location = world2Screen(x_index, y_index);
 			tile.setPosition(screen_location.first, screen_location.second);
 			window.draw(tile);
 		}
 	}
+
+	main_char.draw(window);
 }
 
 void rendering::scene_manager::edit_tile(sf::Vector2i mouse_pos, sf::Vector2f top_left_corner, direction direction)
@@ -37,8 +40,8 @@ void rendering::scene_manager::edit_tile(sf::Vector2i mouse_pos, sf::Vector2f to
 
 	if (isometric_index < isometric_world.size())
 	{
-		isometric_world.at(isometric_index) = direction == direction::forward ? texture_manager.get_next_texture_id(isometric_world.at(isometric_index)) :
-			                                                                    texture_manager.get_prev_texture_id(isometric_world.at(isometric_index));
+		isometric_world.at(isometric_index) = direction == direction::forward ? texture_manager::getInstance()->get_next_texture_id(isometric_world.at(isometric_index)) :
+			                                                                    texture_manager::getInstance()->get_prev_texture_id(isometric_world.at(isometric_index));
 	}
 }
 
